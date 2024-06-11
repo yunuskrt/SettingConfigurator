@@ -10,4 +10,25 @@ body{
   background-color: #1e1e2c;
 }
 
+.form-input{
+  padding: 10px;
+  outline: none;
+  border: 1px solid #33335a;
+  width: 100%;
+  box-sizing: border-box;
+  background: transparent;
+  color: #d2d2d4;
+}
+.form-input:focus {
+  border: 1px solid #df5ed2;
+}
+
+.form-input::placeholder {
+  color: #d2d2d4;
+}
+
+.form-input:hover {
+  cursor: pointer;
+}
+
 </style>

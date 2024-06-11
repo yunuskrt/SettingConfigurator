@@ -7,10 +7,10 @@
             <h3 class="form-title">Please sign in</h3>
             <form>
                 <div class="form-group">
-                    <input type="email" v-model="email" id="name" name="name" required placeholder="E-mail address" />
-                    <input type="password" v-model="password" id="email" name="email" required placeholder="Password" />
+                    <input type="email" v-model="email" id="name" name="name" required placeholder="E-mail address" class="form-input"/>
+                    <input type="password" v-model="password" id="email" name="email" required placeholder="Password" class="form-input"/>
                 </div>
-                <GradientButton color1="#3a4ab1" color2="#6578f3" text="Sign in" @btn-click="handleSignIn" />
+                <GradientButton leftColor="#3a4ab1" rightColor="#6578f3" text="Sign in" @btn-click="handleSignIn" />
             </form>
         </div>
         <footer>
@@ -81,29 +81,6 @@ export default {
 .form-group {
     width: 100%;
     margin-bottom: 5px;
-}
-
-.form-group input {
-    padding: 10px;
-    outline: none;
-    border: 1px solid #33335a;
-    ;
-    width: 100%;
-    box-sizing: border-box;
-    background: transparent;
-    color: #d2d2d4;
-}
-
-.form-group input:focus {
-    border: 1px solid #df5ed2;
-}
-
-.form-group input::placeholder {
-    color: #d2d2d4;
-}
-
-.form-group input:hover {
-    cursor: pointer;
 }
 
 .form-group input:first-child {

@@ -8,11 +8,11 @@
 export default {
     name: 'GradientButton',
     props: {
-        color1: {
+        leftColor: {
             type: String,
             required: true
         },
-        color2: {
+        rightColor: {
             type: String,
             required: true
         },
@@ -29,7 +29,7 @@ export default {
     computed: {
         gradientStyle() {
             return {
-                background: `linear-gradient(to right top, ${this.color1}, ${this.color2})`
+                background: `linear-gradient(to right top, ${this.leftColor}, ${this.rightColor})`
             };
         }
     }
