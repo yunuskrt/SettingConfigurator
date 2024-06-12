@@ -2,16 +2,6 @@
   <div>
     <Header />
     <CongifurationTable :tableData="data" />
-    <!-- <button type="button" class="btn" @click="showModal">
-      Open Modal!
-    </button>  -->
-    <!-- <Modal v-show="modalVisible" @close="closeModal" @confirm="confirmModal" title="Modal Header">
-      <template v-slot:body>
-        <div>
-          asdad
-        </div>
-      </template>
-    </Modal> -->
   </div>
 </template>
 
@@ -86,17 +76,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
- .centered-div {
-   position: fixed;
-   top: 50%;
-   left: 50%;
-   transform: translate(-50%, -50%);
-   width: 90%;
-   max-width: 400px;
-   height: 400px;
-   z-index: 1;
-   background-color: #ffffff;
- }
-</style>

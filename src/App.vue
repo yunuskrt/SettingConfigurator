@@ -30,5 +30,13 @@ body{
 .form-input:hover {
   cursor: pointer;
 }
+.form-link-container {
+  color: #6b7279;
+}
 
+.form-link-container a {
+  text-decoration: none;
+  color: #6b7279;
+  font-weight: bold;
+}
 </style>

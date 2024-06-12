@@ -95,6 +95,7 @@
 <script>
 import GradientButton from '@/components/GradientButton.vue';
 import Modal from '@/components/Modal.vue';
+import {auth} from '@/firebaseConfig'
 export default {
     name: 'ConifgurationTable',
     props: {
@@ -203,10 +204,19 @@ export default {
         },
         handleCreate(){
             const { key, value, description, create_date } = this.addParameter;
+            console.log(auth)
             if ( key != '' && value != '' && description != '') {
                 const addData = {key,value,description,create_date};
                 console.log(addData);
                 // send POST request to the server
+                //console.log(app)
+                // fetch('http://localhost:5000', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify(addData),
+                // })
 
                 // clear the modal afetr successful add
                 this.clearAddParameter();

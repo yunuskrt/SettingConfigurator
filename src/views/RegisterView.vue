@@ -2,9 +2,9 @@
     <Layout>
         <template v-slot:content>
             <div>
-                <EmailPasswordForm @form-submit="handleSignIn" title="Sign in" />
-                <span class="form-link-container">
-                    Don't have an account? <router-link to="/register">Register</router-link>
+                <EmailPasswordForm @form-submit="handleRegister" title="Sign up" />
+                <span  class="form-link-container">
+                    Already have an account? <router-link to="/signin">Sign in</router-link>
                 </span>
 
             </div>
@@ -17,24 +17,25 @@ import Layout from '@/components/Layout.vue';
 import EmailPasswordForm from '@/components/EmailPasswordForm.vue';
 
 import { auth } from '@/firebaseConfig'
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 export default {
-    name: 'SigninView',
+    name: 'RegisterView',
     components: {
         Layout,
         EmailPasswordForm,
     },
     methods: {
-        async handleSignIn(formData) {
+        async handleRegister(formData) {
             // input validation
             if (formData.email != '' && formData.password != '') {
-                // successful sign in redirect
+                // successful sign up redirect
                 try {
-                    await signInWithEmailAndPassword(auth, formData.email, formData.password)
-                    this.$router.push('/')
+                    await createUserWithEmailAndPassword(auth, formData.email, formData.password)
+                    this.$router.push('/signin')
+                    alert('User created successfully')
                 } catch (err) {
-                    alert('Invalid User')
+                    alert(err.message)
                 }
             } else {
                 alert('Please fill in the form')
