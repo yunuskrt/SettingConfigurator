@@ -9,7 +9,6 @@
                 </span>
             </div>
             <div class="dropdown-content" v-if="showDropdown">
-                <ProfileDropdownItem icon="fa-house" text="Go to sign in" @item-click="goToSignIn" />
                 <ProfileDropdownItem icon="fa-right-from-bracket" text="Log out" color="red" @item-click="logOut" />
             </div>
         </div>
@@ -30,11 +29,8 @@ export default {
             this.showDropdown = !this.showDropdown;
         },
         logOut() {
-            console.log('Logging out');
+            this.$emit('logout')
         },
-        goToSignIn() {
-            this.$router.push('/signin');
-        }
     },
     components: {
         ProfileDropdownItem
