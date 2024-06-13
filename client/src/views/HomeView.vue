@@ -19,11 +19,11 @@ import { auth } from '@/firebaseConfig'
 import { signOut } from 'firebase/auth';
 
 export default {
-    name: 'HomeView',
-    components: {
-        Header,
-        CongifurationTable
-    },
+  name: 'HomeView',
+  components: {
+      Header,
+      CongifurationTable
+  },
   data() {
     return {
       data: [],

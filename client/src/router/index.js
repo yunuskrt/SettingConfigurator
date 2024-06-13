@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import SignInView from '@/views/SignInView.vue'
 import RegisterView from '@/views/RegisterView.vue'
+import CountryView from '@/views/CountryView.vue'
 import { auth } from '@/firebaseConfig'
 
 const routes = [
@@ -17,12 +18,19 @@ const routes = [
 		path: '/signin',
 		name: 'signin',
 		component: SignInView,
-		meta: { requiresAuth: true },
 	},
 	{
 		path: '/register',
 		name: 'register',
 		component: RegisterView,
+	},
+	{
+		path: '/:code',
+		name: 'country',
+		component: CountryView,
+		meta: {
+			requiresAuth: true,
+		},
 	},
 ]
 
