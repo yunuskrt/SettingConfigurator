@@ -1,8 +1,13 @@
 <template>
   <div>
-    <Header @logout="handleLogout" />
-    <CongifurationTable :tableData="data" 
-      @edit-config="handleEdit" @delete-config="handleDelete" @add-config="handleCreate"/>
+    <div v-if="isLoading">
+      Loading...
+    </div>
+    <div v-else>
+      <Header @logout="handleLogout" />
+      <CongifurationTable :tableData="data" @edit-config="handleEdit" @delete-config="handleDelete"
+        @add-config="handleCreate" />
+    </div>
   </div>
 </template>
 
@@ -22,54 +27,11 @@ export default {
   data() {
     return {
       data: [],
+      isLoading: false
     }
   },
   methods: {
-    fetchConfiguration() {
-      // fetch configurations from the server
-      const fetchedData = [
-        {
-          id: 1,
-          key: 'min_version',
-          value: '1.4.4',
-          description: 'Minimum required version of the app',
-          create_date: '10/05/2021 01:58'
-        },
-        {
-          id: 2,
-          key: 'latest_version',
-          value: '1.4.7',
-          description: 'Latest version of the app',
-          create_date: '10/05/2021 01:58'
-        },
-        {
-          id: 3,
-          key: 'pricing_tier',
-          value: 't6',
-          description: 'Pricing tier of the user',
-          create_date: '07/07/2021 11:13'
-        },
-        {
-          id: 4,
-          key: 'scroll',
-          value: '5',
-          description: 'Index of Scroll Paywall for free users',
-          create_date: '25/08/2021 10:22'
-        },
-        {
-          id: 5,
-          key: 'scroll_limit',
-          value: '13',
-          description: 'Index of Scroll Limit Paywall for free users',
-          create_date: '25/08/2021 10:33'
-        }
-      ]
-      this.data = fetchedData
-
-      // TODO - get data from the api
-    },
     async handleLogout(){
-      console.log('Logging out')
       try {
         await signOut(auth)
         this.$router.push('/signin')
@@ -77,17 +39,114 @@ export default {
         alert(err.message)
       }
     },
-    handleEdit(editData){
-      // TODO - send PATCH request to the api
-      console.log("PATCH request will be sent with data", editData);
+    async fetchConfiguration() {
+      // handle GET request
+      this.isLoading = true
+
+      const fetchParams = {method:'GET'}
+      const fetchedData = await this.fetchData(fetchParams)
+
+      if (fetchedData.status === 'success'){
+        this.data = fetchedData.data.map((item) => {
+          const date = new Date(item.create_date);
+          const day = date.getDate().toString().padStart(2, '0');
+          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+          const year = date.getFullYear().toString();
+          const hours = date.getHours().toString().padStart(2, '0');
+          const minutes = date.getMinutes().toString().padStart(2, '0');
+          return {
+            ...item,
+            create_date: `${day}/${month}/${year} ${hours}:${minutes}`
+          }
+        })
+      }
+      else{
+        alert(fetchedData.data)
+      }
+      this.isLoading = false
+      
     },
-    handleDelete(rowId){
-      // TODO - send DELETE request to the api
-      console.log("DELETE request will be sent with data:", rowId)
+    async handleEdit(editData){
+      // handle PATCH request
+      const originalData = this.data.find((item) => item.id === editData.id)
+      
+      const differencesKeys = Object.keys(editData).filter((key) => editData[key] !== originalData[key])
+      const modifiedFields = {}
+      let modifiedQuery = ""
+      differencesKeys.forEach((key) => {
+        modifiedFields[key] = editData[key]
+        modifiedQuery += `${key}=${editData[key]}&`
+      })
+      modifiedQuery = modifiedQuery.slice(0, -1)
+
+      const fetchParams = {method:'PATCH', id:editData.id, query:modifiedQuery}
+      const fetchedData = await this.fetchData(fetchParams)
+
+      if (fetchedData.status === 'success'){
+        this.fetchConfiguration()
+      }
+      else{
+        alert(fetchedData.data)
+      }
     },
-    handleCreate(addData){
-      // TODO - send POST request to the api
-      console.log('POST request will be sent with data:', addData)
+    async handleDelete(rowId){
+      // handle DELETE request
+      const fetchParams = {method:'DELETE', id:rowId}
+      const fetchedData = await this.fetchData(fetchParams)
+      
+      if (fetchedData.status === 'success'){
+        this.fetchConfiguration()
+      }
+      else{
+        alert(fetchedData.data)
+      }
+      this.fetchConfiguration()
+    },
+    async handleCreate(addData){
+      // handle POST request
+      const fetchParams = {method:'POST', data:addData}
+      const fetchedData = await this.fetchData(fetchParams)
+      if (fetchedData.status === 'success'){
+        this.fetchConfiguration()
+      }
+      else{
+        alert(fetchedData.data)
+      }     
+    },
+
+    async fetchData(fetchParams){
+      // generic fetch function to interact with the API
+      try {
+        const idToken = await auth.currentUser.getIdToken()
+        const fetchOptions = {
+          method: fetchParams.method,
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': idToken,
+          },
+        }
+        if ('data' in fetchParams) {
+          fetchOptions.body = JSON.stringify(fetchParams.data)
+        }
+       
+        let fetchUrl = 'http://localhost:3000/api/v1/configuration'
+        if ('id' in fetchParams){
+          fetchUrl += `/${fetchParams.id}`
+        }
+        if ('query' in fetchParams){
+          fetchUrl += `?${fetchParams.query}`
+        }
+        const response = await fetch(fetchUrl, fetchOptions)
+        if (fetchParams.method === 'DELETE'){
+          // api do not send json in delete 
+          return {status:'success', data:'Deleted successfully'}
+        }
+        const responseJson = await response.json()
+
+        return {status:'success', data:responseJson}
+      }catch (error) {
+        return {status:'error', data:error.message}
+      }
     }
   },
   created() {
