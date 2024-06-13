@@ -105,18 +105,19 @@ export default {
       this.fetchConfiguration()
     },
     async handleCreate(addData){
-      console.log({addData})
-      // TODO - send updated data with POST request
-
-      // // handle POST request
-      // const fetchParams = {method:'POST', data:addData}
-      // const fetchedData = await this.fetchData(fetchParams)
-      // if (fetchedData.status === 'success'){
-      //   this.fetchConfiguration()
-      // }
-      // else{
-      //   alert(fetchedData.data)
-      // }     
+      const postData = {}
+      Object.keys(addData).forEach((item) => {
+        postData[item] = { defaultValue: addData[item], countryValues: [] }
+      })
+      // handle POST request
+      const fetchParams = {method:'POST', data:postData}
+      const fetchedData = await this.fetchData(fetchParams)
+      if (fetchedData.status === 'success'){
+        this.fetchConfiguration()
+      }
+      else{
+        alert(fetchedData.data)
+      }     
     },
 
     async fetchData(fetchParams){

@@ -43,32 +43,26 @@
                 </template>
                 <tr v-if="isMobileView" class="mobile-row">
                     <td colspan="5" class="mobile-add-container">
-                        <input type="text" v-model="createModal.addParameter.key" placeholder="New Parameter"
+                        <input type="text" v-model="createParams.key" placeholder="New Parameter" class="form-input" />
+                        <input type="text" v-model="createParams.value" placeholder="Value" class="form-input" />
+                        <input type="text" v-model="createParams.description" placeholder="New Description"
                             class="form-input" />
-                        <input type="text" v-model="createModal.addParameter.value" placeholder="Value"
-                            class="form-input" />
-                        <input type="text" v-model="createModal.addParameter.description" placeholder="New Description"
-                            class="form-input" />
-                        <GradientButton leftColor="#469ee6" rightColor="#6ce8c7" text="ADD"
-                            @btn-click="openCreateModal" />
+                        <GradientButton leftColor="#469ee6" rightColor="#6ce8c7" text="ADD" @btn-click="handleCreate" />
                     </td>
                 </tr>
                 <tr v-else class="desktop-row">
                     <td>
-                        <input type="text" v-model="createModal.addParameter.key" placeholder="New Parameter"
-                            class="form-input" />
+                        <input type="text" v-model="createParams.key" placeholder="New Parameter" class="form-input" />
                     </td>
                     <td>
-                        <input type="text" v-model="createModal.addParameter.value" placeholder="Value"
-                            class="form-input" />
+                        <input type="text" v-model="createParams.value" placeholder="Value" class="form-input" />
                     </td>
                     <td colspan="2">
-                        <input type="text" v-model="createModal.addParameter.description" placeholder="New Description"
+                        <input type="text" v-model="createParams.description" placeholder="New Description"
                             class="form-input" />
                     </td>
                     <td>
-                        <GradientButton leftColor="#469ee6" rightColor="#6ce8c7" text="ADD"
-                            @btn-click="openCreateModal" />
+                        <GradientButton leftColor="#469ee6" rightColor="#6ce8c7" text="ADD" @btn-click="handleCreate" />
                     </td>
                 </tr>
             </tbody>
@@ -82,7 +76,7 @@
                             <input type="text" v-model="editModal.key" name="key" placeholder="Parameter Key"
                                 class="modal-input" />
                         </div>
-                        
+
                         <div class="input-group">
                             <label for="value">Value</label>
                             <input type="text" v-model="editModal.value" name="value" placeholder="Value"
@@ -114,15 +108,6 @@
                 </div>
             </template>
         </Modal>
-        <Modal v-show="createModal.visible" @close="closeCreateModal" @confirm="confirmCreateModal"
-            title="Country Selection">
-            <template v-slot:body>
-                <div class="modal-body">
-                    <CountrySelect :selectValues="createModal.selectValues" @add-country="handleAddCountryForCreate"
-                        @remove-country="handleRemoveCountryForCreate" />
-                </div>
-            </template>
-        </Modal>
     </div>
 
 </template>
@@ -133,7 +118,7 @@ import Modal from '@/components/Modal.vue';
 import CountrySelect from '@/components/CountrySelect.vue';
 
 export default {
-    name: 'ConifgurationTable',
+    name: 'ConfigurationTable',
     props: {
         tableData: {
             type: Array,
@@ -162,18 +147,10 @@ export default {
                 id: '',
                 visible: false,
             },
-            createModal: {
-                visible: false,
-                selectValues: {
-                    option: 'all',
-                    country: {},
-                    countries: [],
-                },
-                addParameter: {
-                    key: '',
-                    value: '',
-                    description: '',
-                },
+            createParams: {
+                key: '',
+                value: '',
+                description: '',
             },
             
             windowWidth: window.innerWidth,
@@ -197,7 +174,6 @@ export default {
         },
 
         openEditModal(row) {
-            console.log('Before',{row,modal:this.editModal})
             this.editModal = {
                 id: row.id,
                 key: row.key,
@@ -207,7 +183,6 @@ export default {
                 visible: true,
                 selectValues: this.editModal.selectValues
             }
-            console.log('After', { row, modal:this.editModal })
         },
         openDeleteModal(row) {
             this.deleteModal = {
@@ -215,11 +190,13 @@ export default {
                 visible: true
             }
         },
-        openCreateModal() {
+        handleCreate() {
             // input validation
-            const {key, value, description } = this.createModal.addParameter;
-            if (key != '' && value != '' && description != '')
-                this.createModal.visible = true;
+            const {key, value, description } = this.createParams;
+            if (key != '' && value != '' && description != ''){
+                this.$emit('add-config', this.createParams); // emit to send POST on page level
+                this.clearCreateParams();
+            }        
             else
                 alert('Please fill in the form');
         },
@@ -260,19 +237,6 @@ export default {
             this.$emit('delete-config', this.deleteModal.id);
             this.clearDeleteModal();
         },
-        confirmCreateModal() {
-            // input validation done while opening the modal
-            const type = this.createModal.selectValues.option;
-            const countries = type === "custom" ? this.createModal.selectValues.countries : [];
-            const emitData = {
-                ...this.createModal.addParameter,
-                type: type,
-                countries: countries
-            }
-            this.$emit('add-config', emitData)
-            // clear the modal
-            this.clearCreateModal();
-        },
 
         clearEditModal(){
             this.editModal = {
@@ -295,28 +259,12 @@ export default {
                 visible: false,
             }
         },
-        clearCreateModal(){
-            this.createModal = {
-                visible: false,
-                selectValues: {
-                    option: 'all',
-                    country: {},
-                    countries: [],
-                },
-                addParameter: {
-                    key: '',
-                    value: '',
-                    description: '',
-                },
+        clearCreateParams(){
+            this.createParams = {
+                key: '',
+                value: '',
+                description: '',
             }
-        },
-        handleAddCountryForCreate(){
-            if (!this.createModal.selectValues.countries.includes(this.createModal.selectValues.country)){
-                this.createModal.selectValues.countries.push(this.createModal.selectValues.country)
-            }
-        },
-        handleRemoveCountryForCreate(code){
-            this.createModal.selectValues.countries = this.createModal.selectValues.countries.filter((country) => country.code !== code)
         },
         handleAddCountryForEdit() {
             if (!this.editModal.selectValues.countries.includes(this.editModal.selectValues.country)) {
