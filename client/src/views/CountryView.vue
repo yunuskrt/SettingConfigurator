@@ -6,6 +6,10 @@
         <Header @logout="handleLogout" />
         <div v-if="res.status >= 200 && res.status < 300">
             <CountryConfigurationTable :tableData="res.data" />
+            <div class="download-btn-container">
+                <GradientButton leftColor="#469ee6" rightColor="#6ce8c7" text="Download JSON"
+                    @btn-click="handleDownload" />
+            </div>
         </div>
         <div v-else class="not-found">
             <p>404: Country Not Found</p>
@@ -16,6 +20,7 @@
 <script>
 import Header from '@/components/Header.vue';
 import CountryConfigurationTable from '@/components/CountryConfigurationTable.vue';
+import GradientButton from '@/components/GradientButton.vue';
 
 import { auth } from '@/firebaseConfig'
 import { signOut } from 'firebase/auth';
@@ -56,11 +61,38 @@ export default {
                     },
                 })
                 const result = await response.json()
-                this.res = {status: response.status, data: result}
+                const data = result.map((item) => {
+                    const date = new Date(item.create_date);
+                    const day = date.getDate().toString().padStart(2, '0');
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const year = date.getFullYear().toString();
+                    const hours = date.getHours().toString().padStart(2, '0');
+                    const minutes = date.getMinutes().toString().padStart(2, '0');
+                    return {
+                        ...item,
+                        create_date: `${day}/${month}/${year} ${hours}:${minutes}`
+                    }
+                })
+                this.res = {status: response.status, data: data}
+                
             } catch (error) {
                 alert(error.message)
             }
             this.isLoading = false
+        },
+        handleDownload(){
+            const downloadJson = {}
+            this.res.data.forEach((item) => {
+                downloadJson[item.key] = item.value
+            })
+       
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(downloadJson));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "configuration.json");
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
         }
     },
     created() {
@@ -68,19 +100,23 @@ export default {
     },
     components: {
         Header,
-        CountryConfigurationTable
+        CountryConfigurationTable,
+        GradientButton,
     },
 
 }
 </script>
 
 <style scoped>
-.not-found {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 90vh;
-    font-size: 1.5rem;
-    font-weight: bold;
-}
+    .not-found {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 90vh;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .download-btn-container {
+        padding: 20px;
+    }
 </style>
