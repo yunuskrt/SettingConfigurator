@@ -10,6 +10,12 @@ body{
   background-color: #1e1e2c;
 }
 
+.auth-form-container{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .form-input{
   padding: 10px;
   outline: none;

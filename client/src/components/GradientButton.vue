@@ -36,12 +36,15 @@ export default {
 };
 </script>
 <style scoped>
-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    color: #fff;
-    font-weight: bold;
-    cursor: pointer;
-}
+    button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    button:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
+    }
 </style>

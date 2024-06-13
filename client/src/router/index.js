@@ -18,6 +18,9 @@ const routes = [
 		path: '/signin',
 		name: 'signin',
 		component: SignInView,
+		meta: {
+			requiresAuth: true,
+		},
 	},
 	{
 		path: '/register',

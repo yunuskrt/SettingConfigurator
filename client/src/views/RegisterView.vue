@@ -1,7 +1,7 @@
 <template>
     <Layout>
         <template v-slot:content>
-            <div>
+            <div class="auth-form-container">
                 <EmailPasswordForm @form-submit="handleRegister" title="Sign up" />
                 <span  class="form-link-container">
                     Already have an account? <router-link to="/signin">Sign in</router-link>

@@ -9,6 +9,7 @@
                 </span>
             </div>
             <div class="dropdown-content" v-if="showDropdown">
+                <ProfileDropdownItem icon="fa-house" text="Home" @item-click="navigateHome"/>
                 <ProfileDropdownItem icon="fa-right-from-bracket" text="Log out" color="red" @item-click="logOut" />
             </div>
         </div>
@@ -31,6 +32,9 @@ export default {
         logOut() {
             this.$emit('logout')
         },
+        navigateHome() {
+            this.$router.push('/')
+        }
     },
     components: {
         ProfileDropdownItem
