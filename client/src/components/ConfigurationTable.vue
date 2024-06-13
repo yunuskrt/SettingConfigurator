@@ -95,8 +95,7 @@
                                 placeholder="Create Date" class="modal-input" disabled />
                         </div>
                     </div>
-                    <CountrySelect :selectValues="editModal.selectValues" @add-country="handleAddCountryForEdit"
-                        @remove-country="handleRemoveCountryForEdit" />
+                    <CountrySelect :selectValues="editModal.selectValues" />
                 </div>
             </template>
         </Modal>
@@ -140,7 +139,6 @@ export default {
                 selectValues: {
                     option: 'all',
                     country: {},
-                    countries: [],
                 },
             },
             deleteModal:{
@@ -215,15 +213,13 @@ export default {
             // input validation 
             const {id, key, value, description, create_date } = this.editModal;
             if ( key != '' && value != '' && description != '' && create_date != '') {
-                const editData = {id, key,value,description,create_date}
-               
-                const type = this.editModal.selectValues.option;
-                const countries = type === "custom" ? this.editModal.selectValues.countries : [];
-                
+                const editData = {id, key,value,description,create_date};
+                const option = this.editModal.selectValues.option;
                 const emitData = {
                     ...editData,
-                    type: type,
-                    countries: countries
+                    type: option,
+                    country: option === 'all' ? "" :
+                        this.editModal.selectValues.country.code,
                 }
                 this.$emit('edit-config', emitData); // emit to send PATCH on page level
                 
@@ -249,7 +245,6 @@ export default {
                 selectValues: {
                     option: 'all',
                     country: {},
-                    countries: [],
                 },
             }
         },
@@ -266,14 +261,7 @@ export default {
                 description: '',
             }
         },
-        handleAddCountryForEdit() {
-            if (!this.editModal.selectValues.countries.includes(this.editModal.selectValues.country)) {
-                this.editModal.selectValues.countries.push(this.editModal.selectValues.country)
-            }
-        },
-        handleRemoveCountryForEdit(code) {
-            this.editModal.selectValues.countries = this.editModal.selectValues.countries.filter((country) => country.code !== code)
-        }
+
     },
     components:{
         GradientButton,

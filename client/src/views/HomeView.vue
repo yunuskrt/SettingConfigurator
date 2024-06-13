@@ -67,29 +67,24 @@ export default {
       
     },
     async handleEdit(editData){
-      // TODO - send updated data with PATCH request
-      console.log({editData})
-      // // handle PATCH request
-      // const originalData = this.data.find((item) => item.id === editData.id)
-      
-      // const differencesKeys = Object.keys(editData).filter((key) => editData[key] !== originalData[key])
-      // const modifiedFields = {}
-      // let modifiedQuery = ""
-      // differencesKeys.forEach((key) => {
-      //   modifiedFields[key] = editData[key]
-      //   modifiedQuery += `${key}=${editData[key]}&`
-      // })
-      // modifiedQuery = modifiedQuery.slice(0, -1)
+      const editBody = {
+        key: editData.key,
+        value: editData.value,
+        description: editData.description,
+        type: editData.type,
+        country: editData.country
+      }
+      // handle PATCH request
+      const fetchParams = { method: 'PATCH', id: editData.id, data: editBody}
+      const fetchedData = await this.fetchData(fetchParams)
 
-      // const fetchParams = {method:'PATCH', id:editData.id, query:modifiedQuery}
-      // const fetchedData = await this.fetchData(fetchParams)
+      if (fetchedData.status === 'success'){
+        this.fetchConfiguration()
+      }
+      else{
+        alert(fetchedData.data)
+      }
 
-      // if (fetchedData.status === 'success'){
-      //   this.fetchConfiguration()
-      // }
-      // else{
-      //   alert(fetchedData.data)
-      // }
     },
     async handleDelete(rowId){
       // handle DELETE request
@@ -102,12 +97,12 @@ export default {
       else{
         alert(fetchedData.data)
       }
-      this.fetchConfiguration()
+    
     },
     async handleCreate(addData){
       const postData = {}
       Object.keys(addData).forEach((item) => {
-        postData[item] = { defaultValue: addData[item], countryValues: [] }
+        postData[item] = { defaultValue: addData[item], countryValues: {} }
       })
       // handle POST request
       const fetchParams = {method:'POST', data:postData}
