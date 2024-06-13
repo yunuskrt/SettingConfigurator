@@ -28,6 +28,47 @@ const getConfigurations = async (req, res) => {
 		res.status(500).json({ error: error.message })
 	}
 }
+const getCountryConfigurations = async (req, res) => {
+	try {
+		const { id } = req.params
+
+		// predefined allowed countries
+		const countryDB = ['fr', 'it', 'es', 'tr', 'us']
+
+		if (!countryDB.includes(id)) {
+			res.status(404).json({ error: 'Country not found' })
+		} else {
+			const snapshot = await db
+				.collection('configurations')
+				.orderBy('create_date', 'asc')
+				.get()
+
+			const configurations = []
+			snapshot.forEach((doc) => {
+				configurations.push(doc.data())
+			})
+
+			const formattedConfigurations = configurations.map((param) => {
+				return {
+					id: param.id,
+					key: Object.keys(param.key.countryValues).includes(id)
+						? param.key.countryValues[id]
+						: param.key.defaultValue,
+					value: Object.keys(param.value.countryValues).includes(id)
+						? param.value.countryValues[id]
+						: param.value.defaultValue,
+					description: Object.keys(param.description.countryValues).includes(id)
+						? param.description.countryValues[id]
+						: param.description.defaultValue,
+					create_date: param.create_date,
+				}
+			})
+			res.status(200).json(formattedConfigurations)
+		}
+	} catch (error) {
+		res.status(500).json({ error: error.message })
+	}
+}
 const createConfiguration = async (req, res) => {
 	try {
 		const date = new Date()
@@ -118,6 +159,7 @@ const updateConfiguration = async (req, res) => {
 
 module.exports = {
 	getConfigurations,
+	getCountryConfigurations,
 	createConfiguration,
 	deleteConfiguration,
 	updateConfiguration,
