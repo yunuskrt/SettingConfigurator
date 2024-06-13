@@ -6,7 +6,13 @@
                     <th style="width: 20%">Parameter Key</th>
                     <th style="width: 20%">Value</th>
                     <th style="width: 35%">Description</th>
-                    <th style="width: 15%">Create Date</th>
+                    <th style="width: 15%">
+                        <div class="date-header" @click="handleToggleOrder">
+                            <span>Create Date</span>
+                            <i v-if="ascending" class="fa-solid fa-arrow-down-long"></i>
+                            <i v-else class="fa-solid fa-arrow-up-long"></i>
+                        </div>
+                    </th>
                     <th style="width: 10%"></th>
                 </tr>
             </thead>
@@ -122,6 +128,10 @@ export default {
         tableData: {
             type: Array,
         },
+        ascending: {
+            type: Boolean,
+            default: true
+        },
         breakpoint: {
             type: Number,
             default: 768
@@ -169,6 +179,9 @@ export default {
     methods: {
         handleResize() {
             this.windowWidth = window.innerWidth;
+        },
+        handleToggleOrder() {
+            this.$emit('toggle-order');
         },
 
         openEditModal(row) {
@@ -290,7 +303,6 @@ th{
     font-size: 22px;
     font-weight: normal;
 }
-
 .modal-body{
     display: flex;
     flex-direction: column;

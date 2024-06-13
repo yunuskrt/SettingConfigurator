@@ -39,4 +39,9 @@ body{
   color: #6b7279;
   font-weight: bold;
 }
+.date-header {
+  cursor: pointer;
+  display: flex;
+  gap: 7px;
+}
 </style>

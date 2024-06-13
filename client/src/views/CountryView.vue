@@ -5,7 +5,8 @@
     <div v-else>
         <Header @logout="handleLogout" />
         <div v-if="res.status >= 200 && res.status < 300">
-            <CountryConfigurationTable :tableData="res.data" />
+            <CountryConfigurationTable :tableData="res.data" :ascending="ascending"
+                @toggle-order="handleToggleOrder" />
             <div class="download-btn-container">
                 <GradientButton leftColor="#469ee6" rightColor="#6ce8c7" text="Download JSON"
                     @btn-click="handleDownload" />
@@ -31,7 +32,8 @@ export default {
         return {
             id: this.$route.params.code,
             res: {status: 200, data: []},
-            isLoading: false
+            ascending: true,
+            isLoading: false,
         }
     },
     watch: {
@@ -79,6 +81,10 @@ export default {
                 alert(error.message)
             }
             this.isLoading = false
+        },
+        handleToggleOrder() {
+            this.ascending = !this.ascending
+            this.res.data = this.res.data.reverse()
         },
         handleDownload(){
             const downloadJson = {}

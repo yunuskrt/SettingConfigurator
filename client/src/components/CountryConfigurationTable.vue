@@ -6,7 +6,13 @@
                     <th style="width: 20%">Parameter Key</th>
                     <th style="width: 20%">Value</th>
                     <th style="width: 40%">Description</th>
-                    <th style="width: 20%">Create Date</th>
+                    <th style="width: 20%">
+                        <div class="date-header" @click="handleToggleOrder">
+                            <span>Create Date</span>
+                            <i v-if="ascending" class="fa-solid fa-arrow-down-long"></i>
+                            <i v-else class="fa-solid fa-arrow-up-long"></i>
+                        </div>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -43,6 +49,10 @@ export default {
         tableData: {
             type: Array,
         },
+        ascending: {
+            type: Boolean,
+            default: true
+        },
         breakpoint: {
             type: Number,
             default: 768
@@ -67,6 +77,9 @@ export default {
     methods: {
         handleResize() {
             this.windowWidth = window.innerWidth;
+        },
+        handleToggleOrder() {
+            this.$emit('toggle-order');
         },
     },
     components: {

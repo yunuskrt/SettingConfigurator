@@ -5,8 +5,9 @@
     </div>
     <div v-else>
       <Header @logout="handleLogout" />
-      <CongifurationTable :tableData="data" @edit-config="handleEdit" @delete-config="handleDelete"
-        @add-config="handleCreate" />
+      <CongifurationTable :tableData="data" :ascending="ascending"
+        @edit-config="handleEdit" @delete-config="handleDelete"
+        @add-config="handleCreate" @toggle-order="handleToggleOrder" />
     </div>
   </div>
 </template>
@@ -27,10 +28,15 @@ export default {
   data() {
     return {
       data: [],
+      ascending: true,
       isLoading: false
     }
   },
   methods: {
+    handleToggleOrder(){
+      this.ascending = !this.ascending
+      this.data = this.data.reverse()
+    },
     async handleLogout(){
       try {
         await signOut(auth)
