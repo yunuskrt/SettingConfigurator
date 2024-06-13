@@ -67,27 +67,29 @@ export default {
       
     },
     async handleEdit(editData){
-      // handle PATCH request
-      const originalData = this.data.find((item) => item.id === editData.id)
+      // TODO - send updated data with PATCH request
+      console.log({editData})
+      // // handle PATCH request
+      // const originalData = this.data.find((item) => item.id === editData.id)
       
-      const differencesKeys = Object.keys(editData).filter((key) => editData[key] !== originalData[key])
-      const modifiedFields = {}
-      let modifiedQuery = ""
-      differencesKeys.forEach((key) => {
-        modifiedFields[key] = editData[key]
-        modifiedQuery += `${key}=${editData[key]}&`
-      })
-      modifiedQuery = modifiedQuery.slice(0, -1)
+      // const differencesKeys = Object.keys(editData).filter((key) => editData[key] !== originalData[key])
+      // const modifiedFields = {}
+      // let modifiedQuery = ""
+      // differencesKeys.forEach((key) => {
+      //   modifiedFields[key] = editData[key]
+      //   modifiedQuery += `${key}=${editData[key]}&`
+      // })
+      // modifiedQuery = modifiedQuery.slice(0, -1)
 
-      const fetchParams = {method:'PATCH', id:editData.id, query:modifiedQuery}
-      const fetchedData = await this.fetchData(fetchParams)
+      // const fetchParams = {method:'PATCH', id:editData.id, query:modifiedQuery}
+      // const fetchedData = await this.fetchData(fetchParams)
 
-      if (fetchedData.status === 'success'){
-        this.fetchConfiguration()
-      }
-      else{
-        alert(fetchedData.data)
-      }
+      // if (fetchedData.status === 'success'){
+      //   this.fetchConfiguration()
+      // }
+      // else{
+      //   alert(fetchedData.data)
+      // }
     },
     async handleDelete(rowId){
       // handle DELETE request
@@ -103,15 +105,18 @@ export default {
       this.fetchConfiguration()
     },
     async handleCreate(addData){
-      // handle POST request
-      const fetchParams = {method:'POST', data:addData}
-      const fetchedData = await this.fetchData(fetchParams)
-      if (fetchedData.status === 'success'){
-        this.fetchConfiguration()
-      }
-      else{
-        alert(fetchedData.data)
-      }     
+      console.log({addData})
+      // TODO - send updated data with POST request
+
+      // // handle POST request
+      // const fetchParams = {method:'POST', data:addData}
+      // const fetchedData = await this.fetchData(fetchParams)
+      // if (fetchedData.status === 'success'){
+      //   this.fetchConfiguration()
+      // }
+      // else{
+      //   alert(fetchedData.data)
+      // }     
     },
 
     async fetchData(fetchParams){

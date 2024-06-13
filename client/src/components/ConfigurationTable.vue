@@ -43,26 +43,32 @@
                 </template>
                 <tr v-if="isMobileView" class="mobile-row">
                     <td colspan="5" class="mobile-add-container">
-                        <input type="text" v-model="addParameter.key" placeholder="New Parameter" class="form-input" />
-                        <input type="text" v-model="addParameter.value" placeholder="Value" class="form-input" />
-                        <input type="text" v-model="addParameter.description" placeholder="New Description"
+                        <input type="text" v-model="createModal.addParameter.key" placeholder="New Parameter"
                             class="form-input" />
-                        <GradientButton leftColor="#469ee6" rightColor="#6ce8c7" text="ADD" @btn-click="confirmAdd" />
+                        <input type="text" v-model="createModal.addParameter.value" placeholder="Value"
+                            class="form-input" />
+                        <input type="text" v-model="createModal.addParameter.description" placeholder="New Description"
+                            class="form-input" />
+                        <GradientButton leftColor="#469ee6" rightColor="#6ce8c7" text="ADD"
+                            @btn-click="openCreateModal" />
                     </td>
                 </tr>
                 <tr v-else class="desktop-row">
                     <td>
-                        <input type="text" v-model="addParameter.key" placeholder="New Parameter" class="form-input" />
-                    </td>
-                    <td>
-                        <input type="text" v-model="addParameter.value" placeholder="Value" class="form-input" />
-                    </td>
-                    <td colspan="2">
-                        <input type="text" v-model="addParameter.description" placeholder="New Description"
+                        <input type="text" v-model="createModal.addParameter.key" placeholder="New Parameter"
                             class="form-input" />
                     </td>
                     <td>
-                        <GradientButton leftColor="#469ee6" rightColor="#6ce8c7" text="ADD" @btn-click="confirmAdd" />
+                        <input type="text" v-model="createModal.addParameter.value" placeholder="Value"
+                            class="form-input" />
+                    </td>
+                    <td colspan="2">
+                        <input type="text" v-model="createModal.addParameter.description" placeholder="New Description"
+                            class="form-input" />
+                    </td>
+                    <td>
+                        <GradientButton leftColor="#469ee6" rightColor="#6ce8c7" text="ADD"
+                            @btn-click="openCreateModal" />
                     </td>
                 </tr>
             </tbody>
@@ -70,13 +76,33 @@
         <Modal v-show="editModal.visible" @close="closeEditModal" @confirm="confirmEditModal" title="Edit Parameter">
             <template v-slot:body>
                 <div class="modal-body">
-                    <input type="text" v-model="editModal.key" name="key" placeholder="Parameter Key"
-                        class="modal-input" />
-                    <input type="text" v-model="editModal.value" name="value" placeholder="Value" class="modal-input" />
-                    <input type="text" v-model="editModal.description" name="description" placeholder="Description"
-                        class="modal-input" />
-                    <input type="text" v-model="editModal.create_date" name="createDate" placeholder="Create Date"
-                        class="modal-input" />
+                    <div class="modal-input-container">
+                        <div class="input-group">
+                            <label for="key">Parameter Key</label>
+                            <input type="text" v-model="editModal.key" name="key" placeholder="Parameter Key"
+                                class="modal-input" />
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="value">Value</label>
+                            <input type="text" v-model="editModal.value" name="value" placeholder="Value"
+                                class="modal-input" />
+                        </div>
+
+                        <div class="input-group">
+                            <label for="description">Description</label>
+                            <input type="text" v-model="editModal.description" name="description"
+                                placeholder="Description" class="modal-input" />
+                        </div>
+
+                        <div class="input-group">
+                            <label for="createDate">Create Date</label>
+                            <input type="text" v-model="editModal.create_date" name="createDate"
+                                placeholder="Create Date" class="modal-input" disabled />
+                        </div>
+                    </div>
+                    <CountrySelect :selectValues="editModal.selectValues" @add-country="handleAddCountryForEdit"
+                        @remove-country="handleRemoveCountryForEdit" />
                 </div>
             </template>
         </Modal>
@@ -88,6 +114,15 @@
                 </div>
             </template>
         </Modal>
+        <Modal v-show="createModal.visible" @close="closeCreateModal" @confirm="confirmCreateModal"
+            title="Country Selection">
+            <template v-slot:body>
+                <div class="modal-body">
+                    <CountrySelect :selectValues="createModal.selectValues" @add-country="handleAddCountryForCreate"
+                        @remove-country="handleRemoveCountryForCreate" />
+                </div>
+            </template>
+        </Modal>
     </div>
 
 </template>
@@ -95,6 +130,8 @@
 <script>
 import GradientButton from '@/components/GradientButton.vue';
 import Modal from '@/components/Modal.vue';
+import CountrySelect from '@/components/CountrySelect.vue';
+
 export default {
     name: 'ConifgurationTable',
     props: {
@@ -115,17 +152,32 @@ export default {
                 description: '',
                 create_date: '',
                 visible: false,
+                selectValues: {
+                    option: 'all',
+                    country: {},
+                    countries: [],
+                },
             },
             deleteModal:{
                 id: '',
                 visible: false,
             },
-            addParameter: {
-                key: '',
-                value: '',
-                description: '',
+            createModal: {
+                visible: false,
+                selectValues: {
+                    option: 'all',
+                    country: {},
+                    countries: [],
+                },
+                addParameter: {
+                    key: '',
+                    value: '',
+                    description: '',
+                },
             },
+            
             windowWidth: window.innerWidth,
+            
         }
     },
     computed: {
@@ -145,16 +197,31 @@ export default {
         },
 
         openEditModal(row) {
+            console.log('Before',{row,modal:this.editModal})
             this.editModal = {
-                ...row,
-                visible: true
+                id: row.id,
+                key: row.key,
+                value: row.value,
+                description: row.description,
+                create_date: row.create_date,
+                visible: true,
+                selectValues: this.editModal.selectValues
             }
+            console.log('After', { row, modal:this.editModal })
         },
         openDeleteModal(row) {
             this.deleteModal = {
                 ...row,
                 visible: true
             }
+        },
+        openCreateModal() {
+            // input validation
+            const {key, value, description } = this.createModal.addParameter;
+            if (key != '' && value != '' && description != '')
+                this.createModal.visible = true;
+            else
+                alert('Please fill in the form');
         },
 
         closeEditModal() {
@@ -163,13 +230,25 @@ export default {
         closeDeleteModal() {
             this.deleteModal.visible = false;
         },
+        closeCreateModal() {
+            this.createModal.visible = false;
+        },
 
         confirmEditModal() {
-            // input validation
+            // input validation 
             const {id, key, value, description, create_date } = this.editModal;
             if ( key != '' && value != '' && description != '' && create_date != '') {
                 const editData = {id, key,value,description,create_date}
-                this.$emit('edit-config', editData); // emit to send PATCH on page level
+               
+                const type = this.editModal.selectValues.option;
+                const countries = type === "custom" ? this.editModal.selectValues.countries : [];
+                
+                const emitData = {
+                    ...editData,
+                    type: type,
+                    countries: countries
+                }
+                this.$emit('edit-config', emitData); // emit to send PATCH on page level
                 
                 // clear the modal after input validation
                 this.clearEditModal();
@@ -181,25 +260,33 @@ export default {
             this.$emit('delete-config', this.deleteModal.id);
             this.clearDeleteModal();
         },
-        confirmAdd() {
-            // input validation
-            const { key, value, description } = this.addParameter;
-            if (key != '' && value != '' && description != '') {
-                this.$emit('add-config', this.addParameter)
-                // clear the modal after input validation
-                this.clearAddParameter();
-            } else {
-                alert('Please fill in the form');
+        confirmCreateModal() {
+            // input validation done while opening the modal
+            const type = this.createModal.selectValues.option;
+            const countries = type === "custom" ? this.createModal.selectValues.countries : [];
+            const emitData = {
+                ...this.createModal.addParameter,
+                type: type,
+                countries: countries
             }
+            this.$emit('add-config', emitData)
+            // clear the modal
+            this.clearCreateModal();
         },
 
         clearEditModal(){
             this.editModal = {
+                id: '',
                 key: '',
                 value: '',
                 description: '',
                 create_date: '',
                 visible: false,
+                selectValues: {
+                    option: 'all',
+                    country: {},
+                    countries: [],
+                },
             }
         },
         clearDeleteModal(){
@@ -208,18 +295,42 @@ export default {
                 visible: false,
             }
         },
-        clearAddParameter(){
-            this.addParameter = {
-                key: '',
-                value: '',
-                description: '',
-                create_date: '',
+        clearCreateModal(){
+            this.createModal = {
+                visible: false,
+                selectValues: {
+                    option: 'all',
+                    country: {},
+                    countries: [],
+                },
+                addParameter: {
+                    key: '',
+                    value: '',
+                    description: '',
+                },
             }
+        },
+        handleAddCountryForCreate(){
+            if (!this.createModal.selectValues.countries.includes(this.createModal.selectValues.country)){
+                this.createModal.selectValues.countries.push(this.createModal.selectValues.country)
+            }
+        },
+        handleRemoveCountryForCreate(code){
+            this.createModal.selectValues.countries = this.createModal.selectValues.countries.filter((country) => country.code !== code)
+        },
+        handleAddCountryForEdit() {
+            if (!this.editModal.selectValues.countries.includes(this.editModal.selectValues.country)) {
+                this.editModal.selectValues.countries.push(this.editModal.selectValues.country)
+            }
+        },
+        handleRemoveCountryForEdit(code) {
+            this.editModal.selectValues.countries = this.editModal.selectValues.countries.filter((country) => country.code !== code)
         }
     },
     components:{
         GradientButton,
-        Modal
+        Modal,
+        CountrySelect
     }
 };
 </script>
@@ -249,6 +360,16 @@ th{
     flex-direction: column;
     gap: 10px;
     min-width: 300px;
+}
+
+.input-group label{
+    font-weight: bold;
+}
+
+.modal-input-container{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .modal-input{
