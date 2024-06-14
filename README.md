@@ -114,6 +114,8 @@ npm client
 - Register from website and test it.
 - Server should run on port 3000.
 
+- In this case, firebase credentials of website would not match with the server.
+
 ## 2 - Both setting up client and server manually
 Firstly, clone the project.
 
@@ -124,7 +126,7 @@ Firstly, clone the project.
 - Run 'npm install' and 'npm run serve'.
 - Start testing on port 8080 for the client.
 
-- An already existing data for user is 'yunuskrt@gmail.com' for email and 'yunus123' for password in order to test in current date 14.06.2024.
+- Firebase credentials should be collected from firebase website. Since the credentials are fetched from .env file on both client and server
 
 ## 3 - Test Backend from Postman
 
