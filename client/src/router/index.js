@@ -3,6 +3,8 @@ import HomeView from '@/views/HomeView.vue'
 import SignInView from '@/views/SignInView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import CountryView from '@/views/CountryView.vue'
+import ModificationView from '@/views/ModificationView.vue'
+
 import { auth } from '@/firebaseConfig'
 
 const routes = [
@@ -31,6 +33,14 @@ const routes = [
 		path: '/:code',
 		name: 'country',
 		component: CountryView,
+		meta: {
+			requiresAuth: true,
+		},
+	},
+	{
+		path: '/modification',
+		name: 'modification',
+		component: ModificationView,
 		meta: {
 			requiresAuth: true,
 		},

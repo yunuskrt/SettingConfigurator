@@ -10,6 +10,7 @@
             </div>
             <div class="dropdown-content" v-if="showDropdown">
                 <ProfileDropdownItem icon="fa-house" text="Home" @item-click="navigateHome"/>
+                <ProfileDropdownItem icon="fa-check" text="Modifications" @item-click="navigateModification" />
                 <ProfileDropdownItem icon="fa-right-from-bracket" text="Log out" color="red" @item-click="logOut" />
             </div>
         </div>
@@ -34,6 +35,9 @@ export default {
         },
         navigateHome() {
             this.$router.push('/')
+        },
+        navigateModification() {
+            this.$router.push('/modification')
         }
     },
     components: {

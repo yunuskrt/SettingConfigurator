@@ -16,6 +16,7 @@
 import Header from '@/components/Header.vue'
 import CongifurationTable from '@/components/ConfigurationTable.vue';
 
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from '@/firebaseConfig'
 import { signOut } from 'firebase/auth';
 
@@ -29,7 +30,8 @@ export default {
     return {
       data: [],
       ascending: true,
-      isLoading: false
+      isLoading: false,
+      email: ''
     }
   },
   methods: {
@@ -85,6 +87,18 @@ export default {
       const fetchedData = await this.fetchData(fetchParams)
 
       if (fetchedData.status === 'success'){
+        const message = editData.type === 'all' 
+          ? 'Updated default value of configuration' 
+          : `Updated country value of configuration - country code:${editData.country}`
+        await this.postModification({
+          message: message,
+          type: 'Edit',
+          info: {
+            key: editData.key,
+            value: editData.value,
+            description: editData.description,
+          }
+        })
         this.fetchConfiguration()
       }
       else{
@@ -98,6 +112,14 @@ export default {
       const fetchedData = await this.fetchData(fetchParams)
       
       if (fetchedData.status === 'success'){
+        const message = 'Deleted configuration'
+        await this.postModification({
+          message: message,
+          type: 'Delete',
+          info: {
+            id: rowId
+          }
+        })
         this.fetchConfiguration()
       }
       else{
@@ -114,6 +136,12 @@ export default {
       const fetchParams = {method:'POST', data:postData}
       const fetchedData = await this.fetchData(fetchParams)
       if (fetchedData.status === 'success'){
+        const message = 'Added new configuration'
+        await this.postModification({
+          message: message,
+          type: 'Create',
+          info: addData
+        })
         this.fetchConfiguration()
       }
       else{
@@ -154,9 +182,36 @@ export default {
       }catch (error) {
         return {status:'error', data:error.message}
       }
+    },
+    async postModification(postBody){
+      try {
+        const idToken = await auth.currentUser.getIdToken()
+        const fetchUrl = 'http://localhost:3000/api/v1/modification'
+
+        const fetchOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'authorization': idToken,
+          },
+          body: JSON.stringify({author: this.email, ...postBody})
+        }
+        const response = await fetch(fetchUrl, fetchOptions)
+        const responseJson = await response.json()
+        console.log(responseJson)
+        return {status: 'success', data: responseJson}
+      } catch (error) {
+        return {status: 'error', data: error.message}
+      }
     }
   },
   created() {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        this.email = user.email
+      }
+    });
+
     this.fetchConfiguration()
   },
 }
