@@ -163,8 +163,9 @@ export default {
         if ('data' in fetchParams) {
           fetchOptions.body = JSON.stringify(fetchParams.data)
         }
-       
-        let fetchUrl = 'http://localhost:3000/api/v1/configuration'
+        
+        const apiUrl = process.env.API_URL || 'http://localhost:3000'
+        let fetchUrl = `${apiUrl}/api/v1/configuration`
         if ('id' in fetchParams){
           fetchUrl += `/${fetchParams.id}`
         }
@@ -186,7 +187,8 @@ export default {
     async postModification(postBody){
       try {
         const idToken = await auth.currentUser.getIdToken()
-        const fetchUrl = 'http://localhost:3000/api/v1/modification'
+        const apiUrl = process.env.API_URL || 'http://localhost:3000'
+        const fetchUrl = `${apiUrl}/api/v1/modification`
 
         const fetchOptions = {
           method: 'POST',
@@ -198,7 +200,7 @@ export default {
         }
         const response = await fetch(fetchUrl, fetchOptions)
         const responseJson = await response.json()
-        console.log(responseJson)
+
         return {status: 'success', data: responseJson}
       } catch (error) {
         return {status: 'error', data: error.message}

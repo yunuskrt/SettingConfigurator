@@ -46,7 +46,8 @@ export default {
             this.isLoading = true
             try {
                 const idToken = await auth.currentUser.getIdToken()
-                const response = await fetch('http://localhost:3000/api/v1/modification', {
+                const apiUrl = process.env.API_URL || 'http://localhost:3000'
+                const response = await fetch(`${apiUrl}/api/v1/modification`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -66,7 +67,7 @@ export default {
                         create_date: `${day}/${month}/${year} ${hours}:${minutes}`
                     }
                 })
-                console.log({fetchData:data})
+
                 this.res = { status: response.status, data: data }
 
             } catch (error) {

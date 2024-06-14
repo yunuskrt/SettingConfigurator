@@ -55,7 +55,8 @@ export default {
             this.isLoading = true
             try {
                 const idToken = await auth.currentUser.getIdToken()
-                const response = await fetch(`http://localhost:3000/api/v1/configuration/${this.id.toLowerCase()}`, {
+                const apiUrl = process.env.API_URL || 'http://localhost:3000'
+                const response = await fetch(`${apiUrl}/api/v1/configuration/${this.id.toLowerCase()}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

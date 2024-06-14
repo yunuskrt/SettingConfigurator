@@ -147,7 +147,7 @@ const updateConfiguration = async (req, res) => {
 					// else exists with same value
 				})
 			}
-			console.log(updateData)
+
 			await db.collection('configurations').doc(id).update(updateData)
 			res.status(200).json(updateData)
 		}
