@@ -34,7 +34,7 @@ npm client
 
 - All designs and functionalities are made with custom css and javascript. Including edit, add, delete modals, inputs, tables. No npm packages is used since nothing related about the usage of libraries is stated in the document.
 
-- Used components for reported elements in order to avoid code repetition. (ex: EmailPasswordForm, GradientButton which are used many times.)
+- Used components for repeated elements in order to avoid code repetition. (ex: EmailPasswordForm, GradientButton which are used many times.)
 
 - Used 'scoped' for styling the components in order to achieve more modular and readable structure.
 
@@ -42,7 +42,7 @@ npm client
 
 - Firebase connection values come from .env file.
 
-- Generic fetch functions to send request data to server is designed for better readability.
+- Generic fetch function to send request data to server is designed for better readability.
 
 - Very commonly used CSS classes are put in App.vue file.
 
@@ -52,17 +52,17 @@ npm client
 
 - In config folder, firebase-admin and firestore connections are made and exported. Firebase connection values come from .env file.
 
-- Controllers interact with collections and manipulates data.
+- Controllers interact with firebase collections and manipulates data.
 
 - Endpoints and request types are determined in routes.
 
-- All requests are firstly passing from verify-token middleware which checks if firebase id token is sent within the authorization header. If user id not authenticated, the api automatically returns 401(Forbidden).
+- All requests are firstly passing from verify-token middleware which checks if firebase id token is sent within the authorization header. If user is not authenticated, the api automatically returns 401(Forbidden).
 
 - Used try catch statements while proceeding each request in order to catch the errors and return the response automatically.
 
 - Configuration controller handles the main flow of app. Modification controller stands for the logging, to track user activities.
 
-- For handling the update of parameters, the updated parameter compared with the original data and differences are retrieved. App sends PATCH requests accordingly with only chnged parameters in order to avoid overwrites while updating.
+- For handling the update of parameters, the updated parameter compared with the original data and differences are retrieved. App sends PATCH requests accordingly with only changed parameters in order to avoid overwrites while updating data.
 
 # Bonus & Extra Functionalities
 
@@ -74,7 +74,7 @@ npm client
 
 - Download json button is placed in dynamic /${countryCode} page. On click of the button the json file that contain key,value pairs of table is downloaded
 
-- Register page very similar to login page is done.
+- Register page, which is very similar to login page uses same form component with login page, but handles register functionality instead of login functionality.
 
 - A popup is attached to the user icon on the header which redirects user to home page or modification page as well as logging out user using firebase/auth.
 
@@ -100,21 +100,16 @@ npm client
 
 # Deployment
 
-- Frontend is deployed on Vercel. Backend is not deployed.
+- Frontend is deployed on Vercel. Backend is deployed on Railway.app.
 
-- Link that contains the frontend. https://setting-configurator.vercel.app/#/ . However, the url will not work, without running the server on local on port 3000. Since the requests are made to the base url http://localhost:3000.
+- Link that contains the website. https://setting-configurator.vercel.app/#/
 
 # How to test app?
 
-## 1 - By Website 'https://setting-configurator.vercel.app/#/' and setting up the server manually
+## 1 - By Website 'https://setting-configurator.vercel.app/#/'
 
-- Firstly, clone the project.
-- Navigate to server with 'cd server'.
-- Run 'npm install' and then 'npm start'.
-- Register from website and test it.
-- Server should run on port 3000.
-
-- In this case, firebase credentials of website would not match with the server.
+- Register to app from register screen to see pages or
+- Login with an existing user: {'email':'yunuskrt@gmail.com', password:'yunus123'}
 
 ## 2 - Both setting up client and server manually
 Firstly, clone the project.
