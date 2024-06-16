@@ -55,7 +55,7 @@ export default {
             this.isLoading = true
             try {
                 const idToken = await auth.currentUser.getIdToken()
-                const apiUrl = process.env.API_URL || 'http://localhost:3000'
+                const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000'
                 const response = await fetch(`${apiUrl}/api/v1/configuration/${this.id.toLowerCase()}`, {
                     method: 'GET',
                     headers: {

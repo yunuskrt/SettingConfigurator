@@ -164,7 +164,7 @@ export default {
           fetchOptions.body = JSON.stringify(fetchParams.data)
         }
         
-        const apiUrl = process.env.API_URL || 'http://localhost:3000'
+        const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000'
         let fetchUrl = `${apiUrl}/api/v1/configuration`
         if ('id' in fetchParams){
           fetchUrl += `/${fetchParams.id}`
@@ -187,7 +187,7 @@ export default {
     async postModification(postBody){
       try {
         const idToken = await auth.currentUser.getIdToken()
-        const apiUrl = process.env.API_URL || 'http://localhost:3000'
+        const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000'
         const fetchUrl = `${apiUrl}/api/v1/modification`
 
         const fetchOptions = {
