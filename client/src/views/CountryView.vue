@@ -79,7 +79,8 @@ export default {
                 this.res = {status: response.status, data: data}
                 
             } catch (error) {
-                alert(error.message)
+                console.error('Error:', error)
+                this.res = {status: 404, data: []}
             }
             this.isLoading = false
         },
@@ -115,14 +116,6 @@ export default {
 </script>
 
 <style scoped>
-    .not-found {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 90vh;
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
     .download-btn-container {
         padding: 20px;
     }

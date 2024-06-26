@@ -4,6 +4,7 @@ import SignInView from '@/views/SignInView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import CountryView from '@/views/CountryView.vue'
 import ModificationView from '@/views/ModificationView.vue'
+import ParameterView from '@/views/ParameterView.vue'
 
 import { auth } from '@/firebaseConfig'
 import { onAuthStateChanged } from 'firebase/auth'
@@ -28,7 +29,7 @@ const routes = [
 		component: RegisterView,
 	},
 	{
-		path: '/:code',
+		path: '/country/:code',
 		name: 'country',
 		component: CountryView,
 		meta: {
@@ -39,6 +40,14 @@ const routes = [
 		path: '/modification',
 		name: 'modification',
 		component: ModificationView,
+		meta: {
+			requiresAuth: true,
+		},
+	},
+	{
+		path: '/parameter/:id',
+		name: 'parameter',
+		component: ParameterView,
 		meta: {
 			requiresAuth: true,
 		},

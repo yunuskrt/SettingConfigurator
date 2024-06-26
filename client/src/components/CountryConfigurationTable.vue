@@ -20,7 +20,12 @@
                     <tr v-if="isMobileView" :key="`mobile-${index}`" class="mobile-row">
                         <td colspan="5">
                             <div class="mobile-card">
-                                <div><span>Parameter Key:</span> {{ row.key }}</div>
+                                <div>
+                                    <span>Parameter Key:</span>
+                                    <span class="link-item" @click="() => redirectToParameterView(row.id) ">
+                                        {{ row.key }}
+                                    </span>
+                                </div>
                                 <div><span>Value:</span> {{ row.value }}</div>
                                 <div><span>Description:</span> {{ row.description }}</div>
                                 <div><span>Create Date:</span> {{ row.create_date }}</div>
@@ -28,7 +33,7 @@
                         </td>
                     </tr>
                     <tr v-else :key="`desktop-${index}`" class="desktop-row">
-                        <td>{{ row.key }}</td>
+                        <td class="link-item" @click="()=>redirectToParameterView(row.id)">{{ row.key }}</td>
                         <td>{{ row.value }}</td>
                         <td>{{ row.description }}</td>
                         <td>{{ row.create_date }}</td>
@@ -81,6 +86,10 @@ export default {
         handleToggleOrder() {
             this.$emit('toggle-order');
         },
+
+        redirectToParameterView(id) {
+            this.$router.push(`/parameter/${id}`)
+        }
     },
     components: {
         GradientButton,
@@ -88,48 +97,4 @@ export default {
 };
 </script>
 
-<style scoped>
-    .table-container {
-        width: 100%;
-        overflow-x: auto;
-        margin-top: 1%;
-    }
-
-    table {
-        width: 100%;
-    }
-
-    th,
-    td {
-        text-align: left;
-    }
-    th {
-        color: #7a899f;
-        font-size: 22px;
-        font-weight: normal;
-    }
-    .input-group label {
-        font-weight: bold;
-    }
-
-    .mobile-card {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        border-radius: 20px;
-        border: 1px solid #ddd;
-        padding: 15px
-    }
-
-    .mobile-card span {
-        font-weight: bold;
-    }
-
-    .desktop-row td,th {
-        padding: 20px;
-    }
-
-    .mobile-row td {
-        padding: 5px 20px;
-    }
-</style>
+<style scoped></style>
