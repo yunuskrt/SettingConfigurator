@@ -4,6 +4,9 @@ const router = express.Router()
 
 const {
 	getConfigurations,
+	getParameterConfiguration,
+	removeCountryFromParameter,
+	editCountryParameter,
 	getCountryConfigurations,
 	createConfiguration,
 	deleteConfiguration,
@@ -16,5 +19,10 @@ router
 	.patch(updateConfiguration)
 	.get(getCountryConfigurations)
 router.route('/').post(createConfiguration).get(getConfigurations)
+router
+	.route('/parameter/:id')
+	.get(getParameterConfiguration)
+	.delete(removeCountryFromParameter)
+	.patch(editCountryParameter)
 
 module.exports = router

@@ -28,6 +28,176 @@ const getConfigurations = async (req, res) => {
 		res.status(500).json({ error: error.message })
 	}
 }
+const getParameterConfiguration = async (req, res) => {
+	try {
+		// get doc by id
+		const { id } = req.params
+		const bodyData = req.body
+
+		const configRef = db.collection('configurations').doc(id)
+		const doc = await configRef.get()
+		if (!doc.exists) {
+			res.status(404).json({ error: 'Document not found' })
+		} else {
+			const docData = doc.data()
+
+			const defaultKeyValue = docData.key.defaultValue
+			const defaultValueValue = docData.value.defaultValue
+			const defaultDescriptionValue = docData.description.defaultValue
+
+			// predefined allowed countries - initialize with default value
+			const countryDB = {
+				es: {
+					code: 'es',
+					country: 'Spain',
+					key: defaultKeyValue,
+					value: defaultValueValue,
+					description: defaultDescriptionValue,
+				},
+				fr: {
+					code: 'fr',
+					country: 'France',
+					key: defaultKeyValue,
+					value: defaultValueValue,
+					description: defaultDescriptionValue,
+				},
+				it: {
+					code: 'it',
+					country: 'Italy',
+					key: defaultKeyValue,
+					value: defaultValueValue,
+					description: defaultDescriptionValue,
+				},
+				tr: {
+					code: 'tr',
+					country: 'Turkey',
+					key: defaultKeyValue,
+					value: defaultValueValue,
+					description: defaultDescriptionValue,
+				},
+				us: {
+					code: 'us',
+					country: 'United States',
+					key: defaultKeyValue,
+					value: defaultValueValue,
+					description: defaultDescriptionValue,
+				},
+			}
+
+			// update country values
+			const countryKeyValues = docData.key.countryValues
+			Object.keys(countryKeyValues).forEach((code) => {
+				countryDB[code].key = countryKeyValues[code]
+			})
+
+			const countryValueValues = docData.value.countryValues
+			Object.keys(countryValueValues).forEach((code) => {
+				countryDB[code].value = countryValueValues[code]
+			})
+
+			const countryDescriptionValues = docData.description.countryValues
+			Object.keys(countryDescriptionValues).forEach((code) => {
+				countryDB[code].description = countryDescriptionValues[code]
+			})
+			const data = {
+				countryBased: Object.values(countryDB),
+				default: {
+					key: defaultKeyValue,
+					value: defaultValueValue,
+					description: defaultDescriptionValue,
+				},
+			}
+			res.status(200).json(data)
+		}
+	} catch (error) {
+		console.log({ error: error.message })
+		res.status(500).json({ error: error.message })
+	}
+}
+const removeCountryFromParameter = async (req, res) => {
+	try {
+		// get doc by id
+		const { id } = req.params
+		const code = req.body.code
+
+		const configRef = db.collection('configurations').doc(id)
+		const doc = await configRef.get()
+
+		if (!doc.exists) {
+			res.status(404).json({ error: 'Document not found' })
+		} else {
+			// remove country from countryValues
+			const docData = doc.data()
+			let descriptionCountryValues = docData.description.countryValues
+			let keyCountryValues = docData.key.countryValues
+			let valueCountryValues = docData.value.countryValues
+
+			delete descriptionCountryValues[code]
+			delete keyCountryValues[code]
+			delete valueCountryValues[code]
+
+			await configRef.update({
+				description: {
+					countryValues: descriptionCountryValues,
+					defaultValue: docData.description.defaultValue,
+				},
+				key: {
+					countryValues: keyCountryValues,
+					defaultValue: docData.key.defaultValue,
+				},
+				value: {
+					countryValues: valueCountryValues,
+					defaultValue: docData.value.defaultValue,
+				},
+			})
+			res.status(204).end()
+		}
+	} catch (error) {
+		console.log({ error: error.message })
+		res.status(500).json({ error: error.message })
+	}
+}
+const editCountryParameter = async (req, res) => {
+	try {
+		const { id } = req.params
+		const { countryCode, key, value, description } = req.body
+		const configRef = db.collection('configurations').doc(id)
+		const doc = await configRef.get()
+		if (!doc.exists) {
+			res.status(404).json({ error: 'Document not found' })
+		} else {
+			const docData = doc.data()
+
+			let descriptionCountryValues = docData.description.countryValues
+			let keyCountryValues = docData.key.countryValues
+			let valueCountryValues = docData.value.countryValues
+
+			descriptionCountryValues[countryCode] = description
+			keyCountryValues[countryCode] = key
+			valueCountryValues[countryCode] = value
+
+			const updateData = {
+				description: {
+					countryValues: descriptionCountryValues,
+					defaultValue: docData.description.defaultValue,
+				},
+				key: {
+					countryValues: keyCountryValues,
+					defaultValue: docData.key.defaultValue,
+				},
+				value: {
+					countryValues: valueCountryValues,
+					defaultValue: docData.value.defaultValue,
+				},
+			}
+			await configRef.update(updateData)
+			res.status(200).json(docData)
+		}
+	} catch (error) {
+		console.log({ error: error.message })
+		res.status(500).json({ error: error.message })
+	}
+}
 const getCountryConfigurations = async (req, res) => {
 	try {
 		const { id } = req.params
@@ -159,6 +329,9 @@ const updateConfiguration = async (req, res) => {
 
 module.exports = {
 	getConfigurations,
+	getParameterConfiguration,
+	removeCountryFromParameter,
+	editCountryParameter,
 	getCountryConfigurations,
 	createConfiguration,
 	deleteConfiguration,
