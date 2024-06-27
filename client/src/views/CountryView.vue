@@ -56,7 +56,7 @@ export default {
             try {
                 const idToken = await auth.currentUser.getIdToken()
                 const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:3000'
-                const response = await fetch(`${apiUrl}/api/v1/configuration/${this.id.toLowerCase()}`, {
+                const response = await fetch(`${apiUrl}/api/v1/configuration/country/${this.id.toLowerCase()}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

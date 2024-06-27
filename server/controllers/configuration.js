@@ -28,6 +28,50 @@ const getConfigurations = async (req, res) => {
 		res.status(500).json({ error: error.message })
 	}
 }
+const getJsonConfigurations = async (req, res) => {
+	try {
+		const query = req.query
+		const snapshot = await db
+			.collection('configurations')
+			.orderBy('create_date', 'asc')
+			.get()
+
+		const configurations = []
+		snapshot.forEach((doc) => {
+			configurations.push(doc.data())
+		})
+		if ('country' in query) {
+			const log = {}
+			const country = query.country
+			configurations.forEach((configuration) => {
+				let keyVal = ''
+				let valueVal = ''
+				if (country in configuration.key.countryValues) {
+					keyVal = configuration.key.countryValues[country]
+				} else {
+					keyVal = configuration.key.defaultValue
+				}
+				if (country in configuration.value.countryValues) {
+					valueVal = configuration.value.countryValues[country]
+				} else {
+					valueVal = configuration.value.defaultValue
+				}
+				log[keyVal] = valueVal
+			})
+			res.status(200).json(log)
+		} else if ('show' in query && query.show === 'all') {
+			res.status(200).json(configurations)
+		} else {
+			const log = {}
+			configurations.forEach((configuration) => {
+				log[configuration.key.defaultValue] = configuration.value.defaultValue
+			})
+			res.status(200).json(log)
+		}
+	} catch (error) {
+		res.status(500).json({ error: error.message })
+	}
+}
 const getParameterConfiguration = async (req, res) => {
 	try {
 		// get doc by id
@@ -329,6 +373,7 @@ const updateConfiguration = async (req, res) => {
 
 module.exports = {
 	getConfigurations,
+	getJsonConfigurations,
 	getParameterConfiguration,
 	removeCountryFromParameter,
 	editCountryParameter,
