@@ -9,6 +9,7 @@ const { verifyToken } = require('./middlewares/verifyToken')
 const configurationRouter = require('./routes/configuration')
 const modificationRouter = require('./routes/modification')
 const tokenRouter = require('./routes/token')
+const lockRouter = require('./routes/lock')
 
 app.use(express.json())
 app.use(cors())
@@ -25,6 +26,8 @@ app.use('/api/v1/generateToken', tokenRouter)
 
 app.use('/api/v1/configuration', configurationRouter)
 app.use('/api/v1/modification', modificationRouter)
+
+app.use('/api/v1/lock', lockRouter)
 
 const port = process.env.PORT || 3000
 

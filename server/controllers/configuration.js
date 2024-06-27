@@ -201,17 +201,15 @@ const removeCountryFromParameter = async (req, res) => {
 		res.status(500).json({ error: error.message })
 	}
 }
-const editCountryParameter = async (req, res) => {
-	try {
-		const { id } = req.params
-		const { countryCode, key, value, description } = req.body
-		const configRef = db.collection('configurations').doc(id)
-		const doc = await configRef.get()
+const editCountryParameter = async (id, bodyData) => {
+	const { countryCode, key, value, description } = bodyData
+	const configRef = db.collection('configurations').doc(id)
+	await db.runTransaction(async (t) => {
+		const doc = await t.get(configRef)
 		if (!doc.exists) {
-			res.status(404).json({ error: 'Document not found' })
+			throw new Error('Document not found')
 		} else {
 			const docData = doc.data()
-
 			let descriptionCountryValues = docData.description.countryValues
 			let keyCountryValues = docData.key.countryValues
 			let valueCountryValues = docData.value.countryValues
@@ -234,13 +232,11 @@ const editCountryParameter = async (req, res) => {
 					defaultValue: docData.value.defaultValue,
 				},
 			}
-			await configRef.update(updateData)
-			res.status(200).json(docData)
+
+			await t.update(configRef, updateData)
+			return 'Updated country value of document'
 		}
-	} catch (error) {
-		console.log({ error: error.message })
-		res.status(500).json({ error: error.message })
-	}
+	})
 }
 const getCountryConfigurations = async (req, res) => {
 	try {
@@ -316,20 +312,17 @@ const deleteConfiguration = async (req, res) => {
 	}
 }
 
-const updateConfiguration = async (req, res) => {
-	try {
-		// get doc by id
-		const { id } = req.params
-		const bodyData = req.body
-
-		const configRef = db.collection('configurations').doc(id)
-		const doc = await configRef.get()
+const updateConfiguration = async (id, bodyData) => {
+	// get doc by id
+	const configRef = db.collection('configurations').doc(id)
+	await db.runTransaction(async (t) => {
+		const doc = await t.get(configRef)
 		if (!doc.exists) {
-			res.status(404).json({ error: 'Document not found' })
+			throw new Error('Document not found')
 		} else {
 			// update document
-			const docData = doc.data()
 			let updateData = {}
+			const docData = doc.data()
 			const keys = ['key', 'value', 'description']
 			if (bodyData.type === 'all') {
 				keys.forEach((key) => {
@@ -361,14 +354,10 @@ const updateConfiguration = async (req, res) => {
 					// else exists with same value
 				})
 			}
-
-			await db.collection('configurations').doc(id).update(updateData)
-			res.status(200).json(updateData)
+			await t.update(configRef, updateData)
+			return 'Updated document'
 		}
-	} catch (error) {
-		console.log({ error: error.message })
-		res.status(500).json({ error: error.message })
-	}
+	})
 }
 
 module.exports = {
