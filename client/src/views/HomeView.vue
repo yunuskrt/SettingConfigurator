@@ -83,7 +83,7 @@ export default {
         country: editData.country
       }
       // handle PATCH request
-      const fetchParams = { method: 'PATCH', id: editData.id, data: editBody}
+      const fetchParams = { method: 'PATCH', id: editData.id, data: editBody, query: `userMail=${this.email}`}
       const fetchedData = await this.fetchData(fetchParams)
 
       if (fetchedData.status === 'success'){

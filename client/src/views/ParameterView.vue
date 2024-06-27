@@ -27,7 +27,7 @@ import Header from '@/components/Header.vue'
 import ParameterTable from '@/components/ParameterTable.vue'
 
 import { auth } from '@/firebaseConfig'
-import { signOut } from 'firebase/auth';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 
 export default {
     name: 'ParameterView',
@@ -39,6 +39,7 @@ export default {
             id: this.$route.params.id,
             res: { status: 200, data: []},
             isLoading: false,
+            email: '',
         }
     },
     watch: {
@@ -74,6 +75,9 @@ export default {
                 let fetchUrl = `${apiUrl}/api/v1/configuration/parameter`
                 if ('id' in fetchParams) {
                     fetchUrl += `/${fetchParams.id}`
+                }
+                if ('query' in fetchParams) {
+                    fetchUrl += `?${fetchParams.query}`
                 }
                 const response = await fetch(fetchUrl, fetchOptions)
                 if (fetchParams.method === 'DELETE') {
@@ -115,7 +119,7 @@ export default {
         async handleEditCountry(emittedData){
             // send PATCH request to the API
             try {
-                const fetchParams = { method: 'PATCH', id: this.id, data: emittedData } 
+                const fetchParams = { method: 'PATCH', id: this.id, data: emittedData,query:`userMail=${this.email}` } 
                 await this.fetchData(fetchParams)
                 this.fetchParameterData()
             } catch (error) {
@@ -124,6 +128,11 @@ export default {
         }
     },
     created() {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                this.email = user.email
+            }
+        });
         this.fetchParameterData()
     },
     components: {
