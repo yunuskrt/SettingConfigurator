@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="isLoading">
-      Loading...
+      <Loading />
     </div>
     <div v-else>
       <Header @logout="handleLogout" />
@@ -13,6 +13,7 @@
 </template>
 
 <script>
+import Loading from '@/components/Loading.vue'
 import Header from '@/components/Header.vue'
 import CongifurationTable from '@/components/ConfigurationTable.vue';
 
@@ -23,6 +24,7 @@ import { signOut } from 'firebase/auth';
 export default {
   name: 'HomeView',
   components: {
+      Loading,
       Header,
       CongifurationTable
   },

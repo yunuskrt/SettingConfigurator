@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="isLoading">
-            Loading...
+            <Loading />
         </div>
         <div v-else>
             <Header @logout="handleLogout" />
@@ -23,6 +23,7 @@
 </template>
 
 <script>
+import Loading from '@/components/Loading.vue';
 import Header from '@/components/Header.vue'
 import ParameterTable from '@/components/ParameterTable.vue'
 
@@ -32,6 +33,7 @@ import { signOut, onAuthStateChanged } from 'firebase/auth';
 export default {
     name: 'ParameterView',
     components: {
+        Loading,
         Header,
     },
     data() {

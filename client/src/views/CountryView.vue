@@ -1,6 +1,6 @@
 <template>
     <div v-if="isLoading">
-        Loading...
+        <Loading />
     </div>
     <div v-else>
         <Header @logout="handleLogout" />
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import Loading from '@/components/Loading.vue';
 import Header from '@/components/Header.vue';
 import CountryConfigurationTable from '@/components/CountryConfigurationTable.vue';
 import GradientButton from '@/components/GradientButton.vue';
@@ -107,6 +108,7 @@ export default {
         this.fetchCountryConfiguration()
     },
     components: {
+        Loading,
         Header,
         CountryConfigurationTable,
         GradientButton,

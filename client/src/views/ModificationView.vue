@@ -1,6 +1,6 @@
 <template>
     <div v-if="isLoading">
-        Loading...
+        <Loading />
     </div>
     <div v-else>
         <Header @logout="handleLogout" />
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import Loading from '@/components/Loading.vue';
 import Header from '@/components/Header.vue';
 import ModificationCard from '@/components/ModificationCard.vue';
 
@@ -81,6 +82,7 @@ export default {
         this.fetchModifications()
     },
     components: {
+        Loading,
         Header,
         ModificationCard
     },

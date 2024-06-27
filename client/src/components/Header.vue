@@ -1,6 +1,6 @@
 <template>
     <header>
-        <img src="../assets/icon.png" alt="Codeway" />
+        <img src="../assets/icon.png" alt="Codeway" @click="navigateHome"/>
         <div class="dropdown">
             <div class="dropdown-btn" @click="toggleDropdown">
                 <i class="fa-solid fa-user"></i>
@@ -38,6 +38,9 @@ export default {
         },
         navigateModification() {
             this.$router.push('/modification')
+        },
+        navigateHome() {
+            this.$router.push('/')
         }
     },
     components: {
@@ -55,6 +58,7 @@ header {
 }
 img{
     width: 50px;
+    cursor: pointer;
 }
 .dropdown {
     position: relative;
