@@ -64,13 +64,17 @@ npm client
 
 - For handling the update of parameters, the updated parameter compared with the original data and differences are retrieved. App sends PATCH requests accordingly with only changed parameters in order to avoid overwrites while updating data.
 
+- In order to prevent conflicts while editing parameter, a middleware that process a lock mechanism is designed for the patch requests. User should firstly acquire the lock in order to edit the parameter. The lock is a controller object in order to manage the shared resource, that contains fieldsisLocked, lockedAt, and lockedBy. Lock is released on error and on successful edit operation. Concurrency issues are handled with the usage of lock mechanism and firestore transactions.
+
 # Bonus & Extra Functionalities
 
 - Audiences are created according to countries. While sending POST request, there is no country check, but while editing a parameter, app asks user to select country to apply changes or apply to default. By default, the form has value 'apply to all'. If user selects a country from dropdown, it only update the parameters for the spesific country, thus changes do not reflect to home page. The functionality is achieved with holding objects for each parameter that contain default value and object of country values in db.
 
-- Country data can be read from url ('/{countryCode}'). If parameter has no custom value for the country, defaultValue of parameter is shown. There is no update, delete, or create operation in this page.
+- Country data can be read from url ('/country/{countryCode}'). If parameter has no custom value for the country, defaultValue of parameter is shown. There is no update, delete, or create operation in this page.
 
 - Existing country codes in the app are ['tr','it','es','us','fr']
+
+- Parameter view is designed, can be reached from the url ('/parameter/{id}'). It shows the default value for key,value, and description of the parameter. And the key,value, and description values for each country.
 
 - Download json button is placed in dynamic /${countryCode} page. On click of the button the json file that contain key,value pairs of table is downloaded
 
