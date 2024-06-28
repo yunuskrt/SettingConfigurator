@@ -52,7 +52,32 @@ const releaseLock = async (userMail) => {
 	})
 }
 
+const freeLock = async () => {
+	const lockRef = db.collection('locks').doc('update-lock')
+	const transactionRes = await db.runTransaction(async (t) => {
+		const doc = await t.get(lockRef)
+		if (!doc.exists) {
+			throw new Error('Document not found')
+		} else {
+			const mutex = doc.data()
+			if (mutex.isLocked) {
+				await t.update(lockRef, {
+					isLocked: false,
+					lockedBy: '',
+					lockedAt: '',
+				})
+				return 'Resource unlocked'
+			}
+			await t.update(lockRef, {
+				isLocked: false,
+				lockedBy: '',
+				lockedAt: '',
+			})
+		}
+	})
+}
 module.exports = {
 	acquireLock,
 	releaseLock,
+	freeLock,
 }
