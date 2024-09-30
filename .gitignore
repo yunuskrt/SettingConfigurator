@@ -1,3 +1,5 @@
+.DS_Store
+
 client/.DS_Store
 client/node_modules
 /dist
@@ -7,12 +9,14 @@ client/node_modules
 client/.env
 client/.env.local
 client/.env.*.local
+client/package-lock.json
 
 server/.env
 server/.env.local
 server/.env.*.local
 server/node_modules
 server/service_account.json
+server/package-lock.json
 
 # Log files
 client/npm-debug.log*
